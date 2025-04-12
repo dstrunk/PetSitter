@@ -1,0 +1,6 @@
+projects:
+  api:
+    schema:
+      - http://localhost:8000/graphql
+    documents:
+      - mobile/src/graphql/*.gql

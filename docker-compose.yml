@@ -1,0 +1,71 @@
+services:
+    api:
+        build:
+            context: ./api
+            dockerfile: Dockerfile
+        container_name: pet-api
+        restart: unless-stopped
+        working_dir: /var/www/html
+        environment:
+          PHP_IDE_CONFIG: "serverName=api"
+          XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9003"
+        volumes:
+            - ./api:/var/www/html
+        networks:
+            - pet-network
+        depends_on:
+            - db
+            - redis
+
+    nginx:
+        build:
+            context: ./nginx
+            dockerfile: Dockerfile
+        container_name: pet-nginx
+        restart: unless-stopped
+        ports:
+            - "8000:80"
+        volumes:
+            - ./api:/var/www/html
+            - ./nginx/conf.d:/etc/nginx/conf.d
+        networks:
+            - pet-network
+        depends_on:
+            - api
+
+    db:
+        build:
+            context: ./mysql
+            dockerfile: Dockerfile
+        container_name: pet-db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        ports:
+            - "3306:3306"
+        volumes:
+            - data:/var/lib/mysql
+        networks:
+            - pet-network
+
+    redis:
+        image: redis:alpine
+        container_name: pet-redis
+        restart: unless-stopped
+        ports:
+            - "6379:6379"
+        networks:
+            - pet-network
+
+networks:
+    pet-network:
+        driver: bridge
+
+volumes:
+    data:
+        driver: local
