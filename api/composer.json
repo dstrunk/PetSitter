@@ -12,13 +12,15 @@
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.3",
         "nelmio/cors-bundle": "^2.5",
+        "overblog/graphql-bundle": "^1.7",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.2.*",
         "symfony/runtime": "7.2.*",
         "symfony/security-bundle": "7.2.*",
-        "symfony/yaml": "7.2.*"
+        "symfony/yaml": "7.2.*",
+        "webonyx/graphql-php": "^15.20"
     },
     "config": {
         "allow-plugins": {
