@@ -1,20 +1,9 @@
-
-###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
-###< symfony/framework-bundle ###
-
-###> symfony/phpunit-bridge ###
+composer.lock
+node_modules/
+vendor/
+/public/main.css
+/package-lock.json
+/.php-cs-fixer.cache
+.env
+.idea
 .phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
-
-###> phpunit/phpunit ###
-/phpunit.xml
-/.phpunit.cache/
-###< phpunit/phpunit ###

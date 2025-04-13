@@ -1,81 +1,55 @@
 {
-    "type": "project",
-    "license": "proprietary",
-    "minimum-stability": "stable",
-    "prefer-stable": true,
+    "name": "tempest/app",
     "require": {
-        "php": ">=8.2",
-        "ext-ctype": "*",
-        "ext-iconv": "*",
-        "doctrine/dbal": "^3",
-        "doctrine/doctrine-bundle": "^2.14",
-        "doctrine/doctrine-migrations-bundle": "^3.4",
-        "doctrine/orm": "^3.3",
-        "nelmio/cors-bundle": "^2.5",
-        "overblog/graphql-bundle": "^1.7",
-        "symfony/console": "7.2.*",
-        "symfony/dotenv": "7.2.*",
-        "symfony/flex": "^2",
-        "symfony/framework-bundle": "7.2.*",
-        "symfony/runtime": "7.2.*",
-        "symfony/security-bundle": "7.2.*",
-        "symfony/yaml": "7.2.*",
-        "webonyx/graphql-php": "^15.20"
+        "tempest/framework": "v1.0.0-alpha.6"
     },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true,
-            "symfony/flex": true,
-            "symfony/runtime": true
-        },
-        "bump-after-update": true,
-        "sort-packages": true
+    "require-dev": {
+        "phpunit/phpunit": "^10.2 || ^11.5",
+        "symfony/var-dumper": "^7.1",
+        "carthage-software/mago": "^0.20.2"
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Tests\\Tempest\\": "vendor/brendt/tempest/tests/"
         }
     },
-    "replace": {
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*",
-        "symfony/polyfill-php74": "*",
-        "symfony/polyfill-php80": "*",
-        "symfony/polyfill-php81": "*",
-        "symfony/polyfill-php82": "*"
-    },
+    "authors": [
+        {
+            "name": "Brent Roose",
+            "email": "brendt@stitcher.io"
+        }
+    ],
     "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
-        },
-        "post-install-cmd": [
-            "@auto-scripts"
+        "post-create-project-cmd": [
+            "@php ./vendor/bin/tempest install framework -f",
+            "@php ./tempest discovery:generate",
+            "rm -r .github"
         ],
-        "post-update-cmd": [
-            "@auto-scripts"
+        "post-autoload-dump": [
+            "@php ./tempest discovery:generate"
+        ],
+        "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
+        "mago:fmt": "vendor/bin/mago fmt",
+        "mago:lint": "vendor/bin/mago lint --fix && vendor/bin/mago lint",
+        "qa": [
+            "composer mago:fmt",
+            "composer phpunit",
+            "composer mago:lint"
         ]
     },
-    "conflict": {
-        "symfony/symfony": "*"
-    },
-    "extra": {
-        "symfony": {
-            "allow-contrib": false,
-            "require": "7.2.*"
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "carthage-software/mago": true
         }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^12.1",
-        "symfony/browser-kit": "7.2.*",
-        "symfony/maker-bundle": "^1.62",
-        "symfony/phpunit-bridge": "^7.2"
     }
 }
