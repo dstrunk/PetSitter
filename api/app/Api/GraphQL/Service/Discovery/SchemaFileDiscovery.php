@@ -1,9 +1,9 @@
 <?php
 
 
-namespace App\GraphQL\Service\Discovery;
+namespace App\Api\GraphQL\Service\Discovery;
 
-use App\GraphQL\Service\SchemaFileConfig;
+use App\Api\GraphQL\Service\SchemaFileConfig;
 use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;

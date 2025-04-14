@@ -1,11 +1,11 @@
 <?php
 
-namespace App\GraphQL\Service\Discovery;
+namespace App\Api\GraphQL\Service\Discovery;
 
-use App\GraphQL\Attribute\Mutation;
-use App\GraphQL\Attribute\Query;
-use App\GraphQL\Attribute\Resolver;
-use App\GraphQL\Service\ResolverConfig;
+use App\Api\GraphQL\Attribute\Mutation;
+use App\Api\GraphQL\Attribute\Query;
+use App\Api\GraphQL\Attribute\Resolver;
+use App\Api\GraphQL\Service\ResolverConfig;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
@@ -20,7 +20,7 @@ final class ResolverDiscovery implements Discovery
     private const string ITEM_MUTATION = 'mutation';
 
     public function __construct(
-        private ResolverConfig $resolverConfig,
+        private readonly ResolverConfig $resolverConfig,
     ) {
     }
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\GraphQL\Attribute;
+namespace App\Api\GraphQL\Attribute;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class Mutation
+class Query
 {
     public function __construct(
         public readonly string $name,

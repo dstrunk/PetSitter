@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GraphQL\Controller;
+namespace App\Api\GraphQL\Controller;
 
-use App\GraphQL\Service\GraphQLHandler;
+use App\Api\GraphQL\Service\GraphQLHandler;
 use Tempest\Router\ContentType;
 use Tempest\Router\Post;
 use Tempest\Router\Request;

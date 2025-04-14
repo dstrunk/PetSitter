@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GraphQL\Attribute;
+namespace App\Api\GraphQL\Attribute;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Resolver

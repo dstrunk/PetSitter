@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GraphQL\Service;
+namespace App\Api\GraphQL\Service;
 
 use GraphQL\Type\Definition\Type;
 use Tempest\Container\Singleton;
