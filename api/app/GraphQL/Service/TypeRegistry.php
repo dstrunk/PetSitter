@@ -3,7 +3,9 @@
 namespace App\GraphQL\Service;
 
 use GraphQL\Type\Definition\Type;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final class TypeRegistry
 {
     private(set) array $types = [];
