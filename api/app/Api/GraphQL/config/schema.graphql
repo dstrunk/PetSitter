@@ -1,12 +1,10 @@
+"Not even the absence of light; nothing at all"
+scalar Void
+
 type Query {
-    books: [Book]
+    noop: Void
 }
 
-type Book {
-    name: String
-    author: Author
-}
-
-type Author {
-    name: String
+type Mutation {
+    noop: Void
 }
