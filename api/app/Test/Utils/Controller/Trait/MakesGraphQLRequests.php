@@ -9,7 +9,7 @@ use function Tempest\get;
 
 trait MakesGraphQLRequests
 {
-    protected ?GraphQLHandler $graphQLHandler = null;
+    private GraphQLHandler $graphQLHandler;
 
     #[RunDuring('tearDown')]
     public function restoreErrorHandlers(): void

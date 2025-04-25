@@ -7,8 +7,8 @@ use Tempest\Database\Connection\Connection;
 
 trait RefreshesDatabase
 {
-    protected Connection $connection;
-    protected bool $databaseTransactionsStarted = false;
+    private Connection $connection;
+    private bool $databaseTransactionsStarted = false;
 
     #[RunDuring('setUp')]
     public function beginDatabaseTransaction(): void
@@ -32,13 +32,8 @@ trait RefreshesDatabase
         $this->databaseTransactionsStarted = false;
     }
 
-    public function getDatabaseConnection(): Connection
+    private function getDatabaseConnection(): Connection
     {
-        return $this->connection ??= $this->createDatabaseConnection();
-    }
-
-    public function createDatabaseConnection(): Connection
-    {
-        return $this->container->get(Connection::class);
+        return $this->connection ??= $this->container->get(Connection::class);
     }
 }
