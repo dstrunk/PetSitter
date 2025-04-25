@@ -3,6 +3,7 @@
 namespace App\Test\Utils\Controller\Trait;
 
 use App\Api\GraphQL\Service\GraphQLHandler;
+use App\Test\Utils\Controller\Attribute\RunDuring;
 use App\Test\Utils\Controller\TestResponse;
 use function Tempest\get;
 
@@ -10,14 +11,11 @@ trait MakesGraphQLRequests
 {
     protected ?GraphQLHandler $graphQLHandler = null;
 
-    protected function registerMakesGraphQLRequests(): void
+    #[RunDuring('tearDown')]
+    public function restoreErrorHandlers(): void
     {
-        if (method_exists(get_parent_class($this), 'addTearDownCallback')) {
-            $this->addTearDownCallback(function () {
-                restore_error_handler();
-                restore_exception_handler();
-            });
-        }
+        restore_error_handler();
+        restore_exception_handler();
     }
 
     protected function query(string $query, array $variables = [], ?string $operationName = null): TestResponse

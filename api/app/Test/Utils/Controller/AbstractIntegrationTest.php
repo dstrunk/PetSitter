@@ -2,6 +2,7 @@
 
 namespace App\Test\Utils\Controller;
 
+use App\Test\Utils\Controller\Attribute\RunDuring;
 use Tempest\Framework\Testing\IntegrationTest;
 use function Tempest\Support\Path\normalize;
 
@@ -18,44 +19,52 @@ abstract class AbstractIntegrationTest extends IntegrationTest
 
         $this->registerTraits();
 
-        foreach ($this->setupCallbacks as $callback) {
-            $callback();
+        ksort($this->setupCallbacks);
+
+        foreach ($this->setupCallbacks as $priorityGroup) {
+            foreach ($priorityGroup as $callback) {
+                $callback();
+            }
         }
     }
 
     protected function tearDown(): void
     {
-        foreach ($this->tearDownCallbacks as $callback) {
-            $callback();
+        krsort($this->tearDownCallbacks);
+
+        foreach ($this->tearDownCallbacks as $priorityGroup) {
+            foreach ($priorityGroup as $callback) {
+                $callback();
+            }
         }
 
         parent::tearDown();
     }
 
-    protected function addSetupCallback(callable $callback): void
+    protected function addSetupCallback(callable $callback, int $priority): void
     {
-        $this->setupCallbacks[] = $callback;
+        $this->setupCallbacks[$priority][] = $callback;
     }
 
-    protected function addTearDownCallback(callable $callback): void
+    protected function addTearDownCallback(callable $callback, int $priority): void
     {
-        $this->tearDownCallbacks[] = $callback;
+        $this->tearDownCallbacks[$priority][] = $callback;
     }
 
     private function registerTraits(): void
     {
         $reflection = new \ReflectionClass($this);
-        $traits = [];
-        do {
-            $traits = array_merge($traits, $reflection->getTraitNames());
-        } while ($reflection = $reflection->getParentClass());
+        $methods = $reflection->getMethods();
+        foreach ($methods as $method) {
+            $attributes = $method->getAttributes(RunDuring::class);
+            foreach ($attributes as $attribute) {
+                $runDuring = $attribute->newInstance();
+                $methodName = $method->getName();
 
-        foreach ($traits as $trait) {
-            $traitShortName = substr($trait, strrpos($trait, '\\') + 1);
-            $registerMethod = 'register' . $traitShortName;
-
-            if (method_exists($trait, $registerMethod)) {
-                $this->$registerMethod();
+                match ($runDuring->hook) {
+                    'setUp' => $this->addSetupCallback(fn () => $this->$methodName(), $runDuring->priority),
+                    'tearDown' => $this->addTearDownCallback(fn () => $this->$methodName(), $runDuring->priority),
+                };
             }
         }
     }

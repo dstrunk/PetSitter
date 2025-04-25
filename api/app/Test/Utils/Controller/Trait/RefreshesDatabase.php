@@ -2,6 +2,7 @@
 
 namespace App\Test\Utils\Controller\Trait;
 
+use App\Test\Utils\Controller\Attribute\RunDuring;
 use Tempest\Database\Connection\Connection;
 
 trait RefreshesDatabase
@@ -9,17 +10,7 @@ trait RefreshesDatabase
     protected Connection $connection;
     protected bool $databaseTransactionsStarted = false;
 
-    protected function registerRefreshesDatabase(): void
-    {
-        if (method_exists(get_parent_class($this), 'addSetupCallback')) {
-            $this->addSetupCallback(fn () => $this->beginDatabaseTransaction());
-        }
-
-        if (method_exists(get_parent_class($this), 'addTearDownCallback')) {
-            $this->addTearDownCallback(fn () => $this->rollbackDatabaseTransaction());
-        }
-    }
-
+    #[RunDuring('setUp')]
     public function beginDatabaseTransaction(): void
     {
         $this->databaseTransactionsStarted = true;
@@ -28,6 +19,7 @@ trait RefreshesDatabase
         $conn->beginTransaction();
     }
 
+    #[RunDuring('tearDown')]
     public function rollbackDatabaseTransaction(): void
     {
         if (!$this->databaseTransactionsStarted) {
