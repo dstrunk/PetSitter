@@ -10,7 +10,7 @@ trait RefreshesDatabase
     private Connection $connection;
     private bool $databaseTransactionsStarted = false;
 
-    #[RunDuring('setUp')]
+    #[RunDuring('setupBeforeClass')]
     public function beginDatabaseTransaction(): void
     {
         $this->databaseTransactionsStarted = true;
@@ -19,7 +19,7 @@ trait RefreshesDatabase
         $conn->beginTransaction();
     }
 
-    #[RunDuring('tearDown')]
+    #[RunDuring('tearDownAfterClass')]
     public function rollbackDatabaseTransaction(): void
     {
         if (!$this->databaseTransactionsStarted) {
