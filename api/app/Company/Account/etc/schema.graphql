@@ -8,4 +8,5 @@ type Employee {
     about: String
     email: String
     phone: String
+    isAdmin: Boolean
 }

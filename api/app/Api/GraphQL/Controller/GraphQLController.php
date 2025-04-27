@@ -20,7 +20,7 @@ final readonly class GraphQLController
     public function __invoke(Request $request): Response
     {
         $query = $request->get('query', '');
-        $variables = $request->get('variables', [])?->toArray();
+        $variables = $request->get('variables')?->toArray();
         $operationName = $request->get('operationName');
 
         $result = $this->graphQLHandler->processRequest($query, $variables, $operationName);

@@ -7,6 +7,7 @@ use Tempest\Database\IsDatabaseModel;
 abstract class AbstractFactory
 {
     protected \Faker\Generator $faker;
+    protected array $activeStates = [];
 
     public function __construct(
         private readonly string $modelClass,
@@ -30,9 +31,26 @@ abstract class AbstractFactory
 
     abstract protected function definition(): array;
 
+    public function state(callable $state): self
+    {
+        $attributes = $state([]);
+        if (!is_array($attributes)) {
+            throw new \LogicException('State callback must return an array of attributes.');
+        }
+
+        $this->activeStates[] = $state;
+
+        return $this;
+    }
+
     public function make(array $attributes = []): object
     {
-        $finalAttributes = array_merge($this->definition(), $attributes);
+        $stateAttributes = [];
+        foreach ($this->activeStates as $state) {
+            $stateAttributes = array_merge($stateAttributes, $state([]));
+        }
+
+        $finalAttributes = array_merge($this->definition(), $stateAttributes, $attributes);
         $reflection = new \ReflectionClass($this->modelClass);
         $constructor = $reflection->getConstructor();
 
@@ -48,6 +66,8 @@ abstract class AbstractFactory
                 $instance->$attribute = $value;
             }
         }
+
+        $this->activeStates = [];
 
         return $instance;
     }
@@ -93,7 +113,7 @@ abstract class AbstractFactory
 
     protected function resolveRelationship(string $relatedModelClass, string $relationName, array &$attributes): object
     {
-        // Check if explicit related instance was provided
+        // Check if an explicit related instance was provided
         if (isset($attributes[$relationName])) {
             if (is_object($attributes[$relationName]) && is_a($attributes[$relationName], $relatedModelClass)) {
                 // A model instance was provided directly

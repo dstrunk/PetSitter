@@ -8,6 +8,7 @@ use GraphQL\Type\Schema;
 use ReflectionMethod;
 use ReflectionNamedType;
 use Tempest\Container\Container;
+use function Tempest\Support\Str\to_snake_case;
 
 final class SchemaBuilder
 {
@@ -100,38 +101,61 @@ final class SchemaBuilder
                 return null;
             }
 
-            // Get the class of the source object
             $sourceClass = get_class($source);
 
-            // Check if we have a resolver for this model class
             if ($resolverConfig->hasModelResolver($sourceClass)) {
                 $resolverClass = $resolverConfig->getModelResolver($sourceClass);
 
-                // Check if resolver has a method matching the field name
                 if (method_exists($resolverClass, $fieldName)) {
-                    $resolver = $this->container->get($resolverClass);
-                    return $resolver->{$fieldName}();
+                    $resolverInstance = $this->container->get($resolverClass);
+                    $method = new \ReflectionMethod($resolverClass, $fieldName);
+                    $params = [];
+
+                    foreach ($method->getParameters() as $param) {
+                        $paramType = $param->getType();
+
+                        if ($paramType instanceof ReflectionNamedType
+                            && ! $paramType->isBuiltin()
+                            && is_a($source, $paramType->getName())
+                        ) {
+                            $params[] = $source;
+                        } elseif (array_key_exists($param->getName(), $args)) {
+                            $params[] = $args[$param->getName()];
+                        } elseif ($param->isDefaultValueAvailable()) {
+                            $params[] = $param->getDefaultValue();
+                        } else {
+                            $params[] = null;
+                        }
+                    }
+
+                    return $method->invokeArgs($resolverInstance, $params);
                 }
             }
 
-            // Next priority: method on the model
-            $getterMethod = 'get' . ucfirst($fieldName);
-            if (method_exists($source, $getterMethod)) {
-                return $source->{$getterMethod}();
+            $getter = 'get' . ucfirst($fieldName);
+            if (method_exists($source, $getter)) {
+                return $source->{$getter}();
             }
 
             if (method_exists($source, $fieldName)) {
                 return $source->{$fieldName}();
             }
 
-            // Final priority: property on the model
             if (property_exists($source, $fieldName)) {
                 return $source->{$fieldName};
             }
 
-            // Check for array access
             if (is_array($source) && array_key_exists($fieldName, $source)) {
                 return $source[$fieldName];
+            }
+
+            $snakeCase = to_snake_case($fieldName);
+            if (method_exists($source, $snakeCase)) {
+                return $source->{$snakeCase}();
+            }
+
+            if (property_exists($source, $snakeCase)) {
+                return $source->{$snakeCase};
             }
 
             return null;

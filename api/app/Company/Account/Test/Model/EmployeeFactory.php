@@ -11,10 +11,17 @@ class EmployeeFactory extends AbstractFactory
     protected function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'first_name' => $this->faker->name(),
+            'last_name' => $this->faker->name(),
             'about' => $this->faker->sentence(10),
             'email' => $this->faker->unique()->safeEmail(),
-            'phone' => $this->faker->phoneNumber(),
+            'phone' => $this->faker->e164PhoneNumber(),
+            'is_admin' => false,
         ];
+    }
+
+    public function admin(): self
+    {
+        return $this->state(fn (array $attributes) => ['is_admin' => true]);
     }
 }

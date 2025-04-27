@@ -17,12 +17,7 @@ final class EmployeeQueryTest extends AbstractIntegrationTest
     #[Test]
     public function it_can_fetch_an_employee_by_id(): void
     {
-        $employee = Factory::for(Employee::class)->create([
-            'name' => 'John Doe',
-            'about' => 'Experienced pet sitter with 5 years of experience',
-            'email' => 'john.doe@example.com',
-            'phone' => '555-555-5555',
-        ]);
+        $employee = Factory::for(Employee::class)->admin()->create();
 
         $response = $this->query(/** @lang GraphQL */'
             query GetEmployee($id: ID!) {
@@ -32,6 +27,7 @@ final class EmployeeQueryTest extends AbstractIntegrationTest
                     about
                     email
                     phone
+                    isAdmin
                 }
             }
         ', [
@@ -42,10 +38,11 @@ final class EmployeeQueryTest extends AbstractIntegrationTest
             'data' => [
                 'employee' => [
                     'id' => (string)$employee->id,
-                    'name' => $employee->name,
+                    'name' => $employee->getName(),
                     'about' => $employee->about,
                     'email' => $employee->email,
                     'phone' => $employee->phone,
+                    'isAdmin' => true,
                 ],
             ],
         ]);

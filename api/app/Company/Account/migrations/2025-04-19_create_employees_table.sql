@@ -1,7 +1,9 @@
 CREATE TABLE employees (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    about TEXT,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(50)
+    about VARCHAR(255),
+    phone VARCHAR(50),
+    is_admin BOOLEAN DEFAULT FALSE
 );
