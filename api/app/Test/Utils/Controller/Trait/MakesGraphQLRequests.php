@@ -5,13 +5,14 @@ namespace App\Test\Utils\Controller\Trait;
 use App\Api\GraphQL\Service\GraphQLHandler;
 use App\Test\Utils\Controller\Attribute\RunDuring;
 use App\Test\Utils\Controller\TestResponse;
+use PHPUnit\Framework\Attributes\After;
 use function Tempest\get;
 
 trait MakesGraphQLRequests
 {
     private GraphQLHandler $graphQLHandler;
 
-    #[RunDuring('tearDown')]
+    #[After]
     public function restoreErrorHandlers(): void
     {
         restore_error_handler();

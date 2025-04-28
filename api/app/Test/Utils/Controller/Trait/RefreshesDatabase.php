@@ -3,6 +3,8 @@
 namespace App\Test\Utils\Controller\Trait;
 
 use App\Test\Utils\Controller\Attribute\RunDuring;
+use PHPUnit\Framework\Attributes\AfterClass;
+use PHPUnit\Framework\Attributes\BeforeClass;
 use Tempest\Database\Connection\Connection;
 
 trait RefreshesDatabase
@@ -10,7 +12,7 @@ trait RefreshesDatabase
     private Connection $connection;
     private bool $databaseTransactionsStarted = false;
 
-    #[RunDuring('setupBeforeClass')]
+    #[BeforeClass]
     public function beginDatabaseTransaction(): void
     {
         $this->databaseTransactionsStarted = true;
@@ -19,7 +21,7 @@ trait RefreshesDatabase
         $conn->beginTransaction();
     }
 
-    #[RunDuring('tearDownAfterClass')]
+    #[AfterClass]
     public function rollbackDatabaseTransaction(): void
     {
         if (!$this->databaseTransactionsStarted) {
