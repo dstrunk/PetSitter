@@ -2,6 +2,23 @@ extend type Query {
     employee(id: ID!): Employee
 }
 
+extend type Mutation {
+    employee(input: EmployeeInput): Employee
+}
+
+input EmployeeInput {
+    create: EmployeeCreateInput
+}
+
+input EmployeeCreateInput {
+    firstName: String
+    lastName: String
+    about: String
+    email: String
+    phone: String
+    isAdmin: Boolean = false
+}
+
 type Employee {
     id: ID
     name: String

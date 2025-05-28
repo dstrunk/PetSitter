@@ -94,9 +94,9 @@ abstract class AbstractFactory
                 $arguments[] = $attributes[$name];
                 unset($attributes[$name]);
             } // Handle related model (relationship)
-            else if ($type instanceof \ReflectionNamedType &&
-                !$type->isBuiltin() &&
-                $this->isModelClass($type->getName())) {
+            else if ($type instanceof \ReflectionNamedType
+                && !$type->isBuiltin()
+                && $this->isModelClass($type->getName())) {
                 // This is a model relationship
                 $arguments[] = $this->resolveRelationship($type->getName(), $name, $attributes);
             } else {

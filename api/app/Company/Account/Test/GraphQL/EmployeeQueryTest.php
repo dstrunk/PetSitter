@@ -38,11 +38,54 @@ final class EmployeeQueryTest extends AbstractIntegrationTest
             'data' => [
                 'employee' => [
                     'id' => (string)$employee->id,
-                    'name' => $employee->getName(),
+                    'name' => $employee->first_name . ' ' . $employee->last_name,
                     'about' => $employee->about,
                     'email' => $employee->email,
                     'phone' => $employee->phone,
                     'isAdmin' => true,
+                ],
+            ],
+        ]);
+
+        $response->assertJsonPath('data.employee.id', $employee->id);
+    }
+
+    #[Test]
+    public function it_can_create_an_employee(): void
+    {
+        $input = [
+            'firstName' => $this->faker->firstName(),
+            'lastName' => $this->faker->lastName(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->phoneNumber(),
+            'about' => $this->faker->text(),
+            'isAdmin' => $this->faker->boolean(),
+        ];
+
+        $response = $this->mutation(/** @lang GraphQL */'
+            mutation CreateEmployee($input: EmployeeInput!) {
+                employee(input: $input) {
+                    name
+                    email
+                    phone
+                    about
+                    isAdmin
+                }
+            }
+        ', [
+            'input' => [
+                'create' => $input,
+            ],
+        ]);
+
+        $response->assertJson([
+            'data' => [
+                'employee' => [
+                    'name' => $input['firstName'] . ' ' . $input['lastName'],
+                    'email' => $input['email'],
+                    'phone' => $input['phone'],
+                    'about' => $input['about'],
+                    'isAdmin' => $input['isAdmin'],
                 ],
             ],
         ]);

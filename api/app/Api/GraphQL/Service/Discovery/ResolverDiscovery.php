@@ -4,7 +4,7 @@ namespace App\Api\GraphQL\Service\Discovery;
 
 use App\Api\GraphQL\Attribute\Mutation;
 use App\Api\GraphQL\Attribute\Query;
-use App\Api\GraphQL\Attribute\Resolver;
+use App\Api\GraphQL\Attribute\Resolves;
 use App\Api\GraphQL\Service\ResolverConfig;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
@@ -26,7 +26,7 @@ final class ResolverDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        $resolverAttr = $class->getAttribute(Resolver::class);
+        $resolverAttr = $class->getAttribute(Resolves::class);
         if (!$resolverAttr) {
             return;
         }
@@ -34,25 +34,20 @@ final class ResolverDiscovery implements Discovery
         $className = $class->getName();
         $optionalResolvedClass = $resolverAttr->className;
 
-        // Add entire resolver
+        // Add the entire resolver
         $this->discoveryItems->add($location, [self::ITEM_RESOLVER, $className, $optionalResolvedClass]);
 
         foreach ($class->getPublicMethods() as $method) {
-            // Add queries
             $queryAttr = $method->getAttribute(Query::class);
-            if (!$queryAttr) {
-                continue;
-            }
-
-            $this->discoveryItems->add($location, [self::ITEM_QUERY, $queryAttr->name, $className, $method->getName()]);
-
-            // Add mutations
             $mutationAttr = $method->getAttribute(Mutation::class);
-            if (!$mutationAttr) {
-                continue;
+
+            if ($queryAttr) {
+                $this->discoveryItems->add($location, [self::ITEM_QUERY, $queryAttr->name, $className, $method->getName()]);
             }
 
-            $this->discoveryItems->add($location, [self::ITEM_MUTATION, $mutationAttr->name, $className, $method->getName()]);
+            if ($mutationAttr) {
+                $this->discoveryItems->add($location, [self::ITEM_MUTATION, $mutationAttr->name, $className, $method->getName()]);
+            }
         }
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Test\Utils\Controller\Trait;
 
-use App\Test\Utils\Controller\Attribute\RunDuring;
 use PHPUnit\Framework\Attributes\AfterClass;
 use PHPUnit\Framework\Attributes\BeforeClass;
 use Tempest\Database\Connection\Connection;

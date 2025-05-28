@@ -12,10 +12,12 @@ final class Employee
     use IsDatabaseModel;
 
     public function __construct(
-        public string $name,
+        public string $first_name,
+        public string $last_name,
         public string $email,
         public string $phone,
         public string $about,
+        public bool $is_admin,
     ) {
     }
 }
